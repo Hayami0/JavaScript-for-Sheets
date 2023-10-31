@@ -1,0 +1,54 @@
+
+// https://docs.google.com/spreadsheets/d/1hoyVaEtnff-XqkVzSahi0l_sFhxO0TAnwOGhDg9mg1c/edit?usp=sharing - SOURCE CELL
+
+// https://docs.google.com/spreadsheets/d/1iIQf6VYTlG9ANKBkYnXsP_e1dupS9vgZcUye5DQzki0/edit?usp=sharing -- imported cell
+
+
+
+
+
+function moveImportedData() {
+    // Open the source and target spreadsheets by their IDs and get the specific sheets.
+    var sourceSheet = SpreadsheetApp.openById('1hoyVaEtnff-XqkVzSahi0l_sFhxO0TAnwOGhDg9mg1c').getSheetByName('Pew');
+    var targetSheet = SpreadsheetApp.openById('1iIQf6VYTlG9ANKBkYnXsP_e1dupS9vgZcUye5DQzki0').getSheetByName('October')
+  
+    // Get the current date.
+    var currentDate = new Date();
+  
+    // Get the script properties, which are used to store data between script runs.
+    var scriptProperties = PropertiesService.getScriptProperties();
+  
+    // Get the initial offset from script properties, default to 42 if not set.
+    var initialOffset = scriptProperties.getProperty('offset');
+    if (!initialOffset) {
+      initialOffset = 3;
+    }
+  
+    // Calculate the day number based on the difference between the current date and January 1, 2023, in milliseconds.
+    var dayNumber = Math.floor((currentDate - new Date("2023-01-01")) / (1000 * 60 * 60 * 24)) + initialOffset;
+  
+    // Construct the cell reference in the source sheet based on the calculated day number.
+    var sourceCellReference = 'D' + dayNumber;
+  
+    // Get the data from the source cell in the source sheet.
+    var cellValue = sourceSheet.getRange(sourceCellReference).getValue();
+  
+    // Check if the cell contains a value.
+    if (cellValue !== "") {
+      // Check the data type of the cell value (string or number).
+      if (typeof cellValue === 'string' || typeof cellValue === 'number') {
+        // Set the imported data into a specific cell in the target sheet.
+        targetSheet.getRange('C4').setValue(cellValue);
+  
+        // Increment the offset for the next script run.
+        scriptProperties.setProperty('offset', parseInt(initialOffset) + 1);
+      } else {
+        // Log a message if the cell value is not a string or number.
+        Logger.log("Source cell contains unsupported data type. No data imported.");
+      }
+    } else {
+      // Log a message if the source cell is empty.
+      Logger.log("Source cell is empty. No data imported.");
+    }
+  }
+  
