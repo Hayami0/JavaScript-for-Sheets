@@ -18,7 +18,7 @@ function moveImportedData() {
     // Get the script properties, which are used to store data between script runs.
     var scriptProperties = PropertiesService.getScriptProperties();
   
-    // Get the initial offset from script properties, default to 42 if not set.
+    // Get the initial offset from script properties, default to 1 if not set.
     var initialOffset = scriptProperties.getProperty('offset');
     if (!initialOffset) {
       initialOffset = 3;
